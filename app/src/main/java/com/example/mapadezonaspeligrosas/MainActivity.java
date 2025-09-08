@@ -42,15 +42,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private TileOverlay heatmapOverlay;
     private AuthManager auth;
 
-    // Launcher para registrar incidente (refresca al volver)
-    private final ActivityResultLauncher<Intent> registerLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == RESULT_OK) {
-                    refreshHeatmap();
-                    Toast.makeText(MainActivity.this, "Incidente registrado", Toast.LENGTH_SHORT).show();
-                }
-            });
-
+    private ActivityResultLauncher<Intent> registerLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,12 +51,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         auth = new AuthManager(this);
 
-        // Mapa
+        // Launcher para abrir el formulario y refrescar al volver
+        registerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        refreshHeatmap();
+                        Toast.makeText(MainActivity.this, "Incidente registrado", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        // Cargar mapa
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) mapFragment.getMapAsync(this);
 
-        // FAB Logout (arriba-izquierda)
+        // FAB Logout (arriba-izquierda en tu layout)
         FloatingActionButton fabLogout = findViewById(R.id.fabLogout);
         fabLogout.setOnClickListener(v -> new MaterialAlertDialogBuilder(this)
                 .setTitle("Cerrar sesión")
@@ -79,14 +81,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .setNegativeButton("Cancelar", null)
                 .show());
 
-        // Barra inferior: acciones
+        // Botón Registrar (barra inferior)
         findViewById(R.id.btnRegistrar).setOnClickListener(v -> {
             Intent i = new Intent(this, RegisterIncidentActivity.class);
             registerLauncher.launch(i);
         });
-        findViewById(R.id.btnInfo).setOnClickListener(v -> {
-            startActivity(new Intent(this, InfoActivity.class));
-        });
+
+        // Botón Info (barra inferior)
+        findViewById(R.id.btnInfo).setOnClickListener(v ->
+                startActivity(new Intent(this, InfoActivity.class)));
     }
 
     @Override
@@ -96,18 +99,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Centrar en Yanahuara
         LatLng yanahuara = new LatLng(-16.3876, -71.5446);
         CameraPosition cam = new CameraPosition.Builder()
-                .target(yanahuara).zoom(14f).build();
+                .target(yanahuara)
+                .zoom(14f)
+                .build();
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cam));
 
         enableMyLocation();
         refreshHeatmap();
     }
 
-    /** Vuelve a leer RAW + locales y repinta */
+    /** Vuelve a leer RAW + locales y repinta el heatmap */
     private void refreshHeatmap() {
         List<WeightedLatLng> data = new ArrayList<>();
-        data.addAll(readIncidentesFromRaw());        // base
-        data.addAll(readLocalIncidentsCsv());        // nuevos registrados
+        data.addAll(readIncidentesFromRaw());     // base en res/raw
+        data.addAll(readLocalIncidentsCsv());     // registros nuevos
         drawWeightedHeatmap(data);
     }
 
@@ -117,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         HeatmapTileProvider provider = new HeatmapTileProvider.Builder()
                 .weightedData(data)
-                .radius(40)
+                .radius(40) // Ajusta 20–50 para más/menos difuminado
                 .build();
 
         if (heatmapOverlay != null) heatmapOverlay.remove();
@@ -136,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (first) { first = false; continue; } // cabecera
                 String[] p = line.split(",");
                 if (p.length < 5) continue;
+
                 double lat = Double.parseDouble(p[0].trim());
                 double lon = Double.parseDouble(p[1].trim());
                 int sev = Integer.parseInt(p[4].trim()); // 1–5
@@ -151,13 +157,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         try {
             File f = new File(getFilesDir(), "incidentes_local.csv");
             if (!f.exists()) return list;
+
             try (InputStream is = new FileInputStream(f);
                  BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+
                 String line; boolean first = true;
                 while ((line = br.readLine()) != null) {
                     if (first) { first = false; continue; }
                     String[] p = line.split(",");
                     if (p.length < 5) continue;
+
                     double lat = Double.parseDouble(p[0].trim());
                     double lon = Double.parseDouble(p[1].trim());
                     int sev = Integer.parseInt(p[4].trim());
@@ -168,7 +177,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         return list;
     }
 
-    private double clampWeight(int sev) { return Math.max(1, Math.min(sev, 5)); }
+    private double clampWeight(int sev) {
+        return Math.max(1, Math.min(sev, 5)); // limita a 1–5
+    }
 
     // -------- Ubicación --------
     private void enableMyLocation() {
@@ -193,7 +204,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 }
-
 
 
 
