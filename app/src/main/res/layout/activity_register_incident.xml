@@ -10,37 +10,24 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Título -->
+        <!-- Tipo -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Título">
+            android:hint="Tipo de incidente">
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etTitulo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Tipo (dropdown) -->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Tipo de incidente"
-            android:layout_marginTop="12dp">
-            <AutoCompleteTextView
-                android:id="@+id/actTipo"
+                android:id="@+id/etTipo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none" />
+                android:inputType="textCapSentences" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Severidad (1-5) -->
+        <!-- Severidad 1-5 -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Severidad (1–5)"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="12dp"
+            android:hint="Severidad (1–5)">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etSeveridad"
                 android:layout_width="match_parent"
@@ -52,8 +39,8 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Fecha"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="12dp"
+            android:hint="Fecha">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etFecha"
                 android:layout_width="match_parent"
@@ -66,8 +53,8 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Hora"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="12dp"
+            android:hint="Hora">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etHora"
                 android:layout_width="match_parent"
@@ -76,50 +63,79 @@
                 android:clickable="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Latitud / Longitud -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Latitud">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etLat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal|numberSigned" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Space
+                android:layout_width="12dp"
+                android:layout_height="wrap_content" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Longitud">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etLon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal|numberSigned" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnUbicacion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Usar mi ubicación"
+            android:layout_marginTop="8dp" />
+
         <!-- Descripción -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Descripción"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="12dp"
+            android:hint="Descripción">
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etDescripcion"
+                android:id="@+id/etDesc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:minLines="3" />
+                android:minLines="3"
+                android:inputType="textMultiLine" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Foto (preview) -->
         <ImageView
-            android:id="@+id/ivFoto"
+            android:id="@+id/imgPreview"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginTop="16dp"
             android:scaleType="centerCrop"
             android:contentDescription="@string/app_name" />
 
-        <!-- Botones de foto -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <!-- Botón elegir/tomar foto (tu código usa btnFoto para abrir la galería) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnFoto"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="end"
-            android:layout_marginTop="8dp">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnTomarFoto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tomar foto" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnElegirFoto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Elegir de galería"
-                android:layout_marginStart="8dp" />
-        </LinearLayout>
+            android:text="Elegir foto de galería"
+            android:layout_marginTop="8dp" />
 
         <!-- Guardar / Cancelar -->
         <com.google.android.material.button.MaterialButton

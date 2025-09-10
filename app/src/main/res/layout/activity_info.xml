@@ -7,7 +7,14 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:text="Policía: 999999999"
+        android:text="Policía: (054) 276444"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:text="Hospital Essalud: (54) 226969"
         android:textSize="22sp"
         android:textStyle="bold"
         android:layout_width="wrap_content"
